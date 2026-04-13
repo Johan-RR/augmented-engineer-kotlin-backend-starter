@@ -90,3 +90,11 @@ You MUST strictly adhere to the following guidelines:
 ├─ README.md                         # Project overview and quickstart
 └─ AGENTS.md                         # This file (agent instructions and guidelines)
 ```
+
+## Development Guidelines
+
+You must follow the following guidelines in depends on the contexte you are working on : 
+
+- prompt.instruments.md for **every** prompts.
+- kotlin-coding-guidelines.md for all development tasks.
+- testing-guidelines.md whenever you are writing or reviewing tests.
