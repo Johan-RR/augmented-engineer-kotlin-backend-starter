@@ -95,6 +95,7 @@ You MUST strictly adhere to the following guidelines:
 
 You must follow the following guidelines in depends on the contexte you are working on : 
 
-- prompt.instruments.md for **every** prompts.
-- kotlin-coding-guidelines.md for all development tasks.
-- testing-guidelines.md whenever you are writing or reviewing tests.
+- ./docs/instructions/prompt.instruments.md for **every** prompts.
+- ./docs/instructions/kotlin-coding-guidelines.md for all development tasks.
+- ./docs/instructions/testing-guidelines.md whenever you are writing or reviewing tests.
+- ./docs/instructions/agents-md-maintenance.md whenever you have to maintain guidelines.
