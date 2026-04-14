@@ -4,7 +4,7 @@ description: Create an issue in the form of a markdown file with title, descript
 ---
 
 # Instructions
-1. Extract context and success criteria from the request  
+1. Extract context and success criteria from the request, then complete the context with the existing feature description in `FEATURES.md` if relevant.
 2. Ask 2-3 questions to clarify the request if necessary
 3. Identify impacted modules. If more than one module is impacted, you MUST generate one issue per module. For each module : 
     1. Summarize the context specific to the module
@@ -46,6 +46,13 @@ Feature: Export contacts list
     Given an authenticated user with no contacts
     When executing a query to fetch contacts
     Then the system returns an empty export result
+
+3. Scenario: Reject the order when at least one drink is out of stock
+    Given an attendee with 6 drink tokens
+    And a catalog with 1 lemonade available and 1 premium mojito out of stock
+    When the attendee submits an order for 1 lemonade and 1 premium mojito
+    Then the order is rejected with an out-of-stock reason
+    And no drink tokens are debited from the attendee balance
 ```
 
 file `docs/features/export-contacts/application_export-contacts-issue.md`
@@ -63,6 +70,13 @@ Feature: Export contacts list
     Given an authenticated user with no contacts
     When calling the GET /contacts/export endpoint with a MIME type of text/csv
     Then the application layer returns a 204 No Content response
+
+3. Scenario: Reject an order when attendee tokens are insufficient
+    Given an attendee with 2 drink tokens
+    And a premium cocktail costing 3 drink tokens is available
+    When calling the POST /orders/drinks endpoint to order 1 premium cocktail
+    Then the application layer returns a business rejection for insufficient tokens
+    And no order is created
 ```
 
 file `docs/features/export-contacts/infrastructure_export-contacts-issue.md`
@@ -77,3 +91,4 @@ Feature: Export contacts list
     When transforming the DTO to CSV format
     Then a valid CSV file is generated as stream of bytes with all contact details
 ```
+
