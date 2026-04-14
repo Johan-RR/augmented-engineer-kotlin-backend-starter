@@ -99,3 +99,8 @@ You must follow the following guidelines in depends on the contexte you are work
 - ./docs/instructions/kotlin-coding-guidelines.md for all development tasks.
 - ./docs/instructions/testing-guidelines.md whenever you are writing or reviewing tests.
 - ./docs/instructions/agents-md-maintenance.md whenever you have to maintain guidelines.
+
+
+## Skills Guidelines
+
+- Whenever you are writing Issues for the project, you must follow the guidelines described in `vscode/skills/SKILL.md`.
