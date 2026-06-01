@@ -52,6 +52,11 @@ Regle pratique:
   - effets de bord attendus (appel port, evenement, persistance)
   - absence d'effet de bord en cas d'echec metier
 
+Note: pour les tests au niveau API dans `application`, il est recommandé d'utiliser
+RestAssured (`testImplementation`) pour rendre les appels HTTP explicites et
+vérifier le comportement de l'API. Si le framework utilisé expose un MockMvc,
+`RestAssuredMockMvc` ou `MockMvc` restent des alternatives valides.
+
 ### 4.3 Infrastructure tests
 
 - Cible: adaptateurs concrets (persistance, clients externes, messagerie).
