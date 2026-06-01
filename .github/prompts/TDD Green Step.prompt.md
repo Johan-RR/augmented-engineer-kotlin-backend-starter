@@ -50,28 +50,35 @@ testMethod: `should produce export dto when contacts exist`
 ```
 
 ## Expected output (JSON schema)
-The final output must be a valid JSON object containing the following fields:
+The final output must be a valid JSON object containing the following fields.
 
-``json
+Example of a strictly valid JSON object (no comments inside the JSON block):
+
+```json
 {
-  "status": "green",                   // "green" if the test passes
-  "testFile": "<relative path>",      // modified test file
-  "testMethod": "<method name>",
-  "changes": [                           // list of performed changes
+  "status": "green",
+  "testFile": "application/src/test/kotlin/com/example/OrderServiceTest.kt",
+  "testMethod": "shouldCreateOrderWithStatusEnAttente_whenOrderingSingleAvailableArticle",
+  "changes": [
     {
-      "file": "<relative path>",
-      "summary": "<short description>",
-      "linesAdded": <number>,
-      "locationHint": "<eg: class TestName, after imports>"
+      "file": "application/src/test/kotlin/com/example/OrderServiceTest.kt",
+      "summary": "Added an InMemoryArticleRepository stub as an inner class to satisfy the test",
+      "linesAdded": 42,
+      "locationHint": "After OrderServiceTest class, before file end"
     }
   ],
   "run": {
-    "command": "<command used to run the test>",
-    "result": "<summary output — e.g. 1 passed>"
+    "command": "./gradlew :application:test --tests 'com.example.OrderServiceTest.shouldCreateOrderWithStatusEnAttente_whenOrderingSingleAvailableArticle'",
+    "result": "1 tests passed"
   },
-  "notes": "<optional notes if a production change was required>"
+  "notes": "No production code changes required"
 }
 ```
+
+Notes on the `run` field:
+- `run.command`: a single-line shell command string that was used to run the targeted test. Keep it executable as-is; prefer using single quotes inside the command when quoting test filters to avoid JSON escaping.
+- `run.result`: a short human-readable summary (for example: "1 tests passed"). If you need to include more machine-friendly information, add optional fields such as `exitCode` (number) and `rawOutput` (string) alongside `command` and `result`.
+- IMPORTANT: Do not include JavaScript/JSON-style comments (// or /* */) inside the JSON code block; comments make the block invalid JSON.
 
 Use this JSON to pass information to the Refactor step.
 
