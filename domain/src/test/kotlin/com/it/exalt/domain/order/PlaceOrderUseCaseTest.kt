@@ -86,18 +86,6 @@ class PlaceOrderFixture {
         return article
     }
 
-    fun useCaseHandler(): PlaceOrderUseCase = object : PlaceOrderUseCase {
-        override fun execute(cmd: PlaceOrderCommand): PlaceOrderResult {
-            // Minimal behaviour: create an order id and return EN_ATTENTE
-            // Additionally decrement article quantities in the test fixture store
-            for (item in cmd.items) {
-                val art = articles[item.articleId]
-                if (art != null) {
-                    art.quantity = art.quantity - item.quantity
-                }
-            }
-            return PlaceOrderResult(orderId = "order-1", status = OrderStatus.EN_ATTENTE)
-        }
-    }
+    fun useCaseHandler(): PlaceOrderUseCase = PlaceOrderUseCaseImpl(articles)
 }
 
