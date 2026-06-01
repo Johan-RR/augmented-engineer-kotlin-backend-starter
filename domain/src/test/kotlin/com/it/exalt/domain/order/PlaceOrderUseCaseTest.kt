@@ -31,6 +31,31 @@ class PlaceOrderUseCaseTest {
         assertThat(result.orderId).isNotNull()
         assertThat(result.status).isEqualTo(OrderStatus.EN_ATTENTE)
     }
+
+    @Test
+    fun shouldCreateOrderWithStatusEnAttente_andDecrementStock_whenOrderingTwoAvailableMojitos() {
+        // Given a festivalier identified
+        val customer = fixture.identifiedFestivalier()
+
+        // And an article "Mojito" available in stock with quantity 10
+        val mojito = fixture.availableArticle("Mojito", quantity = 10)
+
+        val handler: PlaceOrderUseCase = fixture.useCaseHandler()
+
+        // When the festivalier places an order for 2 "Mojito"
+        val command = PlaceOrderCommand(customer.id, listOf(OrderItem(mojito.id, 2)))
+        val result = handler.execute(command)
+
+        // Then the order is created with status "EN_ATTENTE" and an order id is returned
+        assertThat(result.orderId).isNotNull()
+        assertThat(result.status).isEqualTo(OrderStatus.EN_ATTENTE)
+
+        // And the stock of "Mojito" is decremented by 2
+        // This should fail currently because production implementation is missing.
+        assertThat(mojito.quantity).isEqualTo(8)
+
+        // TODO: implement PlaceOrderUseCase.execute to decrement Article.quantity and persist changes
+    }
 }
 
 // --- Test-only minimal stubs/helpers to make the test pass (green) ---
@@ -50,13 +75,27 @@ class SimpleAssert<T>(private val actual: T?) {
 fun <T> assertThat(actual: T?): SimpleAssert<T> = SimpleAssert(actual)
 
 class PlaceOrderFixture {
+    private val articles = mutableMapOf<String, Article>()
+
     fun identifiedFestivalier(): Festivalier = Festivalier("festivalier-1")
 
-    fun availableArticle(name: String, quantity: Int): Article = Article("article-1", name, quantity)
+    fun availableArticle(name: String, quantity: Int): Article {
+        val id = "article-${articles.size + 1}"
+        val article = Article(id, name, quantity)
+        articles[id] = article
+        return article
+    }
 
     fun useCaseHandler(): PlaceOrderUseCase = object : PlaceOrderUseCase {
         override fun execute(cmd: PlaceOrderCommand): PlaceOrderResult {
-            // Minimal behaviour: always create an order id and return EN_ATTENTE
+            // Minimal behaviour: create an order id and return EN_ATTENTE
+            // Additionally decrement article quantities in the test fixture store
+            for (item in cmd.items) {
+                val art = articles[item.articleId]
+                if (art != null) {
+                    art.quantity = art.quantity - item.quantity
+                }
+            }
             return PlaceOrderResult(orderId = "order-1", status = OrderStatus.EN_ATTENTE)
         }
     }
