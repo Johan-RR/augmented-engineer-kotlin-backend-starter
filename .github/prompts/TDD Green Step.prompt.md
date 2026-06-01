@@ -38,6 +38,15 @@ Crucial clarification: The Green step's purpose is strictly to make the test pas
 
 Note: If you determine a production-file change is absolutely unavoidable, explicitly document the exact reason in the JSON `notes` field and avoid making that production change in the Green step unless the user asked for it.
 
+## Application layer specifics
+
+When the target module is the application layer (`application/`), the Green step may use application-layer frameworks and test utilities to make the test pass. Examples of allowed tools: Spring Boot test support (ApplicationContext, `ApplicationContextInitializer`), `MockMvc`, `TestRestTemplate`, `RestAssured`, `WireMock`, or `Testcontainers`.
+
+Rules for application-layer Green steps:
+- Use these frameworks only from test sources (`src/test/...`) or test-only fixtures/configuration. Do NOT create or modify production files under `src/main/kotlin` to satisfy tests.
+- Implement the strict minimum inside tests: add test-local stubs, spies, fixtures, or test-only beans. Avoid implementing production business logic in production modules during this step.
+- Any refactoring that moves test scaffolding into production code belongs to the Refactor step; document such needs in the JSON `notes` field if unavoidable.
+
 ## Expected input
 The prompt input must include at minimum:
 - `testFilePath`: workspace-relative path to the test file (e.g. `domain/src/test/kotlin/com/example/UseCaseTest.kt`).

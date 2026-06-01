@@ -40,6 +40,16 @@ model: GPT-5 mini (copilot)
 - Avoid consuming existing simulation or stub utilities that are known to return successful responses for the scenario; instead target the intended production layers so the test fails due to missing or unimplemented behaviour.
 - Add clear `TODO` comments in the test indicating which production classes or methods need to be implemented next (e.g. `// TODO: implement OrderController.postOrder`), to make the Red->Green transition explicit.
 
+## Application layer specifics
+
+When the target module is the application layer (`application/`), tests are allowed to use application-layer frameworks and test utilities to express scenarios during both the Red and Green steps. Examples: Spring Boot test support (ApplicationContext, `ApplicationContextInitializer`), `MockMvc`, `TestRestTemplate`, `RestAssured`, `WireMock`, `Testcontainers`.
+
+Rules for application-layer tests:
+- Use these frameworks only from the test sources (`src/test/...`) or test-only fixtures/configuration. Do NOT modify production files under `src/main/kotlin` to satisfy tests.
+- Keep changes minimal and test-local: register test-only beans, add lightweight test-only stubs/spies, or throw test-only `@ResponseStatus` exceptions from test-only components when needed. Avoid implementing production business logic in production modules.
+- The Red step must still produce a failing test because the real production implementation is missing. Do not rely on shared test helpers that always return success; target the real production entrypoint so missing behaviour causes failure.
+- The Green step may add test-local scaffolding (stubs, spies, fixtures) inside test sources to make the test pass; extracting that scaffolding into production code belongs to the Refactor step.
+
 ## Test naming guidance (examples)
 
 - Naming convention to use: `should<ExpectedBehavior>_when<Context>` (camel case, no spaces) or the Kotlin backtick style with a readable sentence.

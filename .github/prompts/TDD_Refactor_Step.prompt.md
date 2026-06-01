@@ -75,6 +75,15 @@ Breaching this discipline (for example making multiple unrelated changes in one 
 
 Additional constraint: Avoid scope creep across layers. Each micro-step must keep modifications inside the target layer; do not refactor or implement cross-layer features in the same micro-step. If a cross-layer change is unavoidable, document the justification in the `notes` field and perform it as a separate, explicitly-approved micro-step.
 
+## Application layer specifics
+
+When extracting test-local scaffolding that concerns the application layer (`application/`), the Refactor step MUST ensure business logic is stubbed or implemented correctly and moved out of tests. In particular:
+- If the Green step used test-only spies/stubs inside tests (for example a `PlaceOrderFixture` with a `PlaceOrderUseCaseSpy`), the Refactor step must either:
+  - extract a reusable test fixture under `application/src/test/kotlin/...` if the behaviour is only relevant for tests, or
+  - implement a minimal, well-named production stub/adapter in `application/src/main/kotlin/...` or `domain/src/main/kotlin/...` that implements the proper interface (for example `PlaceOrderUseCase`) so the behaviour is explicit and reusable.
+- Do NOT leave business behaviour implemented solely inside test files. The goal of Refactor is to make the production boundary explicit and to place business logic where it belongs.
+- Prefer extracting interfaces and small adapters rather than copying full test implementations into production. Keep changes minimal and follow module boundaries.
+
 ## Expected output (JSON)
 
 The final result must be a valid JSON object containing at least:

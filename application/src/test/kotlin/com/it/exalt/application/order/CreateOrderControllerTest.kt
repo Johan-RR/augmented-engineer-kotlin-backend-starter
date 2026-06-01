@@ -43,14 +43,11 @@ class CreateOrderControllerTest {
     @BeforeEach
     fun setUp() {
         // Start the production Spring Boot application for integration testing.
-        // Register a test-only PlaceOrderUseCase bean programmatically to mock domain behavior.
+        // Register a test-only PlaceOrderUseCase bean from the fixture to mock domain behavior.
         val app = SpringApplication(com.it.exalt.Application::class.java)
+        val fixture = PlaceOrderFixture()
         app.addInitializers(ApplicationContextInitializer<ConfigurableApplicationContext> { ctx ->
-            ctx.beanFactory.registerSingleton("placeOrderUseCase", object : PlaceOrderUseCase {
-                override fun execute(cmd: PlaceOrderCommand): PlaceOrderResult {
-                    return PlaceOrderResult(orderId = "order-1", status = OrderStatus.EN_ATTENTE)
-                }
-            })
+            ctx.beanFactory.registerSingleton("placeOrderUseCase", fixture.getUseCaseHandler())
         })
         context = app.run()
     }
@@ -115,7 +112,32 @@ class CreateOrderControllerTest {
         // TODO: enforce authentication for POST /commandes (OrderController.postOrder)
     }
 
+    @Test
+    fun shouldReturn400_whenPostingOrderWithoutArticles() {
+        // Scenario: Requête refusée si le corps de la requête est invalide
+        // Given un festivalier identifié
+        // When le festivalier envoie une requête POST /commandes sans articles
+        // Then la réponse a le statut HTTP 400
+
+        val jsonPayload = """
+            { "festivalierId": "festivalier-42", "articles": [] }
+        """.trimIndent()
+
+        Given {
+            contentType(ContentType.JSON)
+            header("Authorization", "Basic dGVzdDp0ZXN0")
+            body(jsonPayload)
+        } When {
+            post("http://localhost:8080/commandes")
+        } Then {
+            statusCode(400)
+        }
+
+        // TODO: implement request validation in OrderController.postOrder to reject empty articles
+    }
+
     // Test-only DTOs
+
     data class ArticleRequest(val id: String, val quantite: Int)
     data class CreateOrderRequest(val festivalierId: String, val articles: List<ArticleRequest>)
 }
