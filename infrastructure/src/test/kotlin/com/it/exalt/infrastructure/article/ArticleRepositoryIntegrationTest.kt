@@ -24,5 +24,4 @@ class ArticleRepositoryIntegrationTest {
         assertThat(found.quantity).isEqualTo(10)
     }
 
-    // Production InMemoryArticleRepository extracted to infrastructure/src/main/kotlin
 }
