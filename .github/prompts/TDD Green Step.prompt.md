@@ -11,14 +11,16 @@ model: GPT-5 mini (copilot)
 
 ## Goal
 Implement the minimal code necessary to make a test written during the Red step pass. Implementation should be added in the test file itself (for example helper classes, test doubles, stubs, or internal helper functions), without modifying the targeted test body or other tests.
-
 Important: iterate as needed — after each minimal change run the targeted test and continue making only minimal, test-local edits (within the prompt constraints) until the test is green.
+
+Crucial clarification: The Green step's purpose is strictly to make the test pass with the minimal, test-local scaffolding required. Do NOT implement production behaviour or create/modify production files under `src/main/kotlin` in this step. If the test requires objects or functions that belong to production, prefer defining small stubs, fakes or helper types directly inside the test file (or test sources). Any extraction of those stubs into production code and full implementation belongs to the Refactor step.
 
 ## Instructions
 1. Parse the provided input: it must include the test file path (workspace-relative) and the test method name to make pass.
 2. Confirm the test file and method exist and that the test currently fails (if possible, run only the targeted test).
 3. Implement only the code strictly required for the targeted test to succeed. Mandatory rules:
    - Add code inside the test file itself (e.g., inner classes, companion objects, stubs, helpers defined in the test file).
+  - Prefer adding test-local stubs/fakes/helpers inside the test file or test sources. Do NOT create production files or move logic into `src/main/kotlin` in the Green step.
    - Do not modify the body of the targeted test method.
    - Do not modify other tests in the same class/file.
    - Do not introduce functionality beyond what the test requires.
@@ -33,6 +35,8 @@ Important: iterate as needed — after each minimal change run the targeted test
 - If the test depends on classes or methods that should normally live in production code, prefer to define stubs or test-only implementations inside the test file.
 - Keep added helpers readable and clearly named.
 - Respect the project's coding style.
+
+Note: If you determine a production-file change is absolutely unavoidable, explicitly document the exact reason in the JSON `notes` field and avoid making that production change in the Green step unless the user asked for it.
 
 ## Expected input
 The prompt input must include at minimum:

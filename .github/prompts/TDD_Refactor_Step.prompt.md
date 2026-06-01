@@ -18,6 +18,8 @@ Take the JSON output produced by the "Green" step and perform the minimal iterat
 - Preserve the observable behaviour covered by tests;
 - Keep all tests green throughout the process.
 
+Important clarification: The Refactor step is the place to move test-local scaffolding into proper production code and to implement the production behaviour required by the targeted feature. Refactor work MUST create or modify production sources under `src/main/kotlin/...` (in the proper module: `domain`, `application`, or `infrastructure`) when extracting code from tests. Do not perform those production extractions during the Green step.
+
 ## Expected input
 
 The input must be the exact JSON output from the "TDD Green step". Minimal expected schema (excerpt):
@@ -40,6 +42,7 @@ The agent must validate that `status` is `green` before starting.
 - After each micro-step, run only the necessary tests (the targeted test and, if needed, a wider subset) and verify they remain green.
 - Do not change behaviour: test assertions must remain valid and test results must not change.
 - Prefer creating production classes in the correct module (`domain`, `application`, or `infrastructure`) under `src/main/kotlin/...`.
+  - Focus scope: When implementing production code, limit changes to the single relevant layer (domain, application, or infrastructure). Do not alter unrelated layers or broaden scope. If production code needs collaborators in other layers, provide minimal interfaces or use fakes/stubs to satisfy those dependencies rather than modifying other modules.
 - If a production code change is absolutely required and justified, explain it in the final `notes` field.
 - Keep changes small and readable; follow the repository's Kotlin style conventions. Avoid large-scale rewrites.
 - Always report which files were modified, a short summary, and the number of lines added/removed.
@@ -59,6 +62,7 @@ Breaching this discipline (for example making multiple unrelated changes in one 
 
 1. Inspect the `testFile` referenced and locate production code embedded in the test.
 2. Propose and apply the first micro-step (for example, extract a small class or interface) by creating the necessary production files.
+  - When creating production files, place them under the appropriate module's `src/main/kotlin/...` path and choose the package that matches the project's conventions. Implement just enough production behaviour to preserve the tests' assertions; if external collaborators are required, depend on interfaces and provide test-only fakes where appropriate.
 3. Run the targeted test(s) — use the provided command or an adapted command such as `./gradlew :<module>:test --tests '<fqn.TestClass.testName>'`.
 4. If tests pass, mark the step complete and propose the next micro-step.
 5. Repeat until all production code has been moved out of tests and the codebase is clean.
@@ -68,6 +72,8 @@ Breaching this discipline (for example making multiple unrelated changes in one 
 - Minimize modifications: prefer local extractions and small helper classes rather than global refactorings.
 - Do not change test bodies (except imports if necessary for compilation) and do not delete tests.
 - Every change must be accompanied by a test run proving nothing broke.
+
+Additional constraint: Avoid scope creep across layers. Each micro-step must keep modifications inside the target layer; do not refactor or implement cross-layer features in the same micro-step. If a cross-layer change is unavoidable, document the justification in the `notes` field and perform it as a separate, explicitly-approved micro-step.
 
 ## Expected output (JSON)
 
