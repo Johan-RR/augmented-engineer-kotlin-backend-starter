@@ -27,6 +27,16 @@ class ArticleRepositoryJpaAdapter(private val jpa: SpringDataArticleRepository) 
             jpa.save(ArticleEntity(id = id, name = "", quantity = 0, status = status))
         }
     }
+
+    override fun findByFestivalierIdAndStatus(festivalierId: String, status: OrderStatus): List<Article> {
+        // Minimal implementation: query all article entities and filter by an ownership
+        // encoding convention where the id may be prefixed with "{festivalierId}:".
+        // This keeps the change small; a future refactor should introduce a proper
+        // Order entity and repository with a real query.
+        val entities = jpa.findAll()
+        return entities.filter { e -> e.id.startsWith("$festivalierId:") && e.status == status }
+            .map { it.toDomain() }
+    }
 }
 
 private fun ArticleEntity.toDomain(): Article = Article(id = this.id, name = this.name, quantity = this.quantity, status = this.status)

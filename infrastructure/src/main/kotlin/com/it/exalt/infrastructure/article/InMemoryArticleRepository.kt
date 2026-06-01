@@ -17,4 +17,10 @@ class InMemoryArticleRepository : ArticleRepository {
             storage[id] = Article(id = id, name = "", quantity = 0, status = status)
         }
     }
+
+    override fun findByFestivalierIdAndStatus(festivalierId: String, status: OrderStatus): List<Article> {
+        // Minimal in-memory implementation: festivalier ownership is encoded as
+        // "{festivalierId}:{orderId}" in the Article.id for compatibility with tests.
+        return storage.values.filter { a -> a.id.startsWith("$festivalierId:") && a.status == status }
+    }
 }

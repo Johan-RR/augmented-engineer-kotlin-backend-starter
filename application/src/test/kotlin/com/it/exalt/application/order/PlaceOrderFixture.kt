@@ -16,5 +16,8 @@ class PlaceOrderFixture {
     class InMemoryArticleRepository(private val storage: MutableMap<String, Article>) : ArticleRepository {
         override fun findById(id: String): Article? = storage[id]
         override fun save(article: Article) { storage[article.id] = article }
+        override fun findByFestivalierIdAndStatus(festivalierId: String, status: OrderStatus): List<Article> {
+            return storage.values.filter { a -> a.id.startsWith("$festivalierId:") && a.status == status }
+        }
     }
 }
