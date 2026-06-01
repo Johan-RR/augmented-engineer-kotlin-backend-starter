@@ -22,6 +22,12 @@ model: GPT-5 mini (copilot)
     - for the application module, follow the guidelines in `docs/agents/instructions/application-testing.instructions.md`
     - for the infrastructure module, follow the guidelines in `docs/agents/instructions/infrastructure-testing.instructions.md`
     - Also consult the project agent conventions in `AGENTS.md` (root) and the agent maintenance guide at `docs/agents/instructions/agents-md-maintenance.md` for any agent-specific behaviour or naming rules.
+   - Important: The test should target the real production entrypoints (controllers, use-cases, services, repositories) and NOT rely on any existing test-only helpers or simulation utilities that return a successful response. Using such helpers risks producing a passing test and defeats the goal of the Red step.
+
+   - To make the test expressive and compilable, you MAY add test-only DTOs, helper functions, builders or small fixtures inside the test source set (i.e., under `src/test/...`). These test-only artifacts are allowed so the scenario can be expressed clearly (for example `ArticleRequest`, simple builders, or small in-test helpers). **Do not** add these artifacts to the production sources.
+
+   - Do NOT implement any production business logic or concrete adapters in this step. The test must fail because the real production implementation is missing or incomplete.
+
 4. Run the test to confirm it fails.
 
 ## Requirements
@@ -29,6 +35,10 @@ model: GPT-5 mini (copilot)
 - **NEVER** implement any production code in this step. Your ONLY goal is to write a failing test.
 - You **MUST** ensure the test fails when executed. 
 - The name of the test method should be descriptive and follow the naming conventions outlined in the testing guidelines.
+
+- The test SHOULD compile and run. To ensure compilation you may add test-only data classes and helper functions inside the test file or test fixtures, but these must remain in the test sources and not be promoted to production code.
+- Avoid consuming existing simulation or stub utilities that are known to return successful responses for the scenario; instead target the intended production layers so the test fails due to missing or unimplemented behaviour.
+- Add clear `TODO` comments in the test indicating which production classes or methods need to be implemented next (e.g. `// TODO: implement OrderController.postOrder`), to make the Red->Green transition explicit.
 
 ## Test naming guidance (examples)
 
