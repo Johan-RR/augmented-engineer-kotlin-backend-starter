@@ -56,6 +56,37 @@ class PlaceOrderUseCaseTest {
 
         // TODO: implement PlaceOrderUseCase.execute to decrement Article.quantity and persist changes
     }
+
+    @Test
+    fun shouldRefuseOrder_whenStockIsInsufficient() {
+        // Given an identified festivalier
+        val customer = fixture.identifiedFestivalier()
+
+        // And an article "Mojito" available in stock with quantity 1
+        val mojito = fixture.availableArticle("Mojito", quantity = 1)
+
+        val handler: PlaceOrderUseCase = fixture.useCaseHandler()
+
+        // When attempting to create an order for 2 "Mojito"
+        val command = PlaceOrderCommand(customer.id, listOf(OrderItem(mojito.id, 2)))
+        val caught = try {
+            handler.execute(command)
+            null
+        } catch (e: Exception) {
+            e
+        }
+
+        // Then the order is refused and a STOCK_INSUFFISANT error is raised
+        assertThat(caught).isNotNull()
+        assertThat(caught!!.message).isEqualTo("STOCK_INSUFFISANT")
+
+        // And the stock of "Mojito" is unchanged
+        assertThat(mojito.quantity).isEqualTo(1)
+
+        // TODO: implement PlaceOrderUseCase.execute to:
+        //  - validate stock availability and throw IllegalStateException("STOCK_INSUFFISANT")
+        //  - avoid mutating stock on failure
+    }
 }
 
 // --- Test-only minimal stubs/helpers to make the test pass (green) ---
@@ -86,6 +117,7 @@ class PlaceOrderFixture {
         return article
     }
 
-    fun useCaseHandler(): PlaceOrderUseCase = PlaceOrderUseCaseImpl(articles)
+    fun useCaseHandler(): PlaceOrderUseCase = PlaceOrderUseCaseImpl(InMemoryArticleRepository(articles))
 }
+
 
