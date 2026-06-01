@@ -35,7 +35,8 @@ The agent must validate that `status` is `green` before starting.
 
 ## Key rules
 
-- Work in micro-steps: one small logical change per iteration (e.g., extract a class, rename a method, move a constant).
+- Work in micro-steps: perform exactly one single modification per iteration. Each micro-step must contain one, and only one, logical change (for example: extract ONE class, move ONE constant, or rename ONE method).
+- Do NOT combine multiple logical changes in the same micro-step — e.g., do not move several classes at once, do not extract multiple helpers in one commit, and do not rename and extract in the same step.
 - After each micro-step, run only the necessary tests (the targeted test and, if needed, a wider subset) and verify they remain green.
 - Do not change behaviour: test assertions must remain valid and test results must not change.
 - Prefer creating production classes in the correct module (`domain`, `application`, or `infrastructure`) under `src/main/kotlin/...`.
@@ -47,7 +48,7 @@ The agent must validate that `status` is `green` before starting.
 
 - Do not drift into improving unrelated code or pursuing broad "quality improvements" that are outside the narrow goal of extracting test-embedded production code. If a desirable improvement is discovered, note it in `notes` and postpone actual changes until after the refactor micro-steps are complete (or create a separate issue).
 - Follow the strict micro-step discipline: MODIFY -> TEST -> VALIDATE -> CONTINUE. That means:
-  1. MODIFY: Make a single, well-scoped code change.
+  1. MODIFY: Make a single, well-scoped code change. This means only one modification per micro-step (see Key rules). For example, extract exactly one class — do not extract multiple classes in the same step.
  2. TEST: Run the minimal set of tests needed (targeted test or small subset).
  3. VALIDATE: Confirm tests remain green and the behavior is unchanged. If failures occur, revert or fix immediately to restore green before proceeding.
  4. CONTINUE: Only then propose or apply the next micro-step.
