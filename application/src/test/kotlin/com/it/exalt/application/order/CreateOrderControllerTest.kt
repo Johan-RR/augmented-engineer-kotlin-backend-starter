@@ -80,6 +80,7 @@ class CreateOrderControllerTest {
 
         Given {
             contentType(ContentType.JSON)
+            header("Authorization", "Basic dGVzdDp0ZXN0")
             body(jsonPayload)
         } When {
             post("http://localhost:8080/commandes")

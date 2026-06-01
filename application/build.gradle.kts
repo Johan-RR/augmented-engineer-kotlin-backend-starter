@@ -12,6 +12,8 @@ dependencies {
     
     // Production dependencies for the web API (Spring)
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.5")
+    // Spring Security for authentication/authorization
+    implementation("org.springframework.boot:spring-boot-starter-security:3.1.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 }
 
