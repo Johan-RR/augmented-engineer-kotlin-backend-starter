@@ -5,14 +5,26 @@ import com.it.exalt.domain.order.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 
-@DataJpaTest
-class ArticleRepositoryJpaAdapterIntegrationTest @Autowired constructor(
-    private val jpa: SpringDataArticleRepository
-) {
+@SpringBootTest(classes = [ArticleRepositoryJpaAdapterIntegrationTest.TestConfig::class])
+class ArticleRepositoryJpaAdapterIntegrationTest {
 
-    private val adapter: ArticleRepositoryJpaAdapter = ArticleRepositoryJpaAdapter(jpa)
+    @Autowired
+    private lateinit var jpa: SpringDataArticleRepository
+
+    private lateinit var adapter: ArticleRepositoryJpaAdapter
+
+    @org.junit.jupiter.api.BeforeEach
+    fun setUp() {
+        adapter = ArticleRepositoryJpaAdapter(jpa)
+    }
+
+    @SpringBootConfiguration
+    @EnableAutoConfiguration
+    open class TestConfig
 
     @Test
     fun `should save and find article via adapter`() {

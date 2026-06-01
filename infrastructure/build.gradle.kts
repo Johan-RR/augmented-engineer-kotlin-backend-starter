@@ -8,6 +8,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.5")
     runtimeOnly("com.h2database:h2:2.2.220")
 
+    // Kotlin reflection is required by Spring when using Kotlin classes
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
     // Test dependencies for integration tests (Spring test support)
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.5")
 }

@@ -10,10 +10,10 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "articles")
-data class ArticleEntity(
+open class ArticleEntity(
     @Id
     @Column(name = "id", nullable = false)
-    val id: String,
+    var id: String,
 
     @Column(name = "name", nullable = false)
     var name: String,
@@ -24,4 +24,7 @@ data class ArticleEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = true)
     var status: OrderStatus? = null
-)
+) {
+    // JPA requires a default constructor
+    constructor() : this("", "", 0, null)
+}
