@@ -90,6 +90,30 @@ class CreateOrderControllerTest {
         }
     }
 
+    @Test
+    fun shouldReturn401_whenPostingOrderWithoutAuthenticatedFestivalier() {
+        // Scenario: Requête refusée si le festivalier n'est pas authentifié
+        // Given aucun festivalier authentifié
+        // When une requête POST /commandes est envoyée
+        // Then la réponse a le statut HTTP 401
+
+        val jsonPayload = """
+            { "festivalierId": "festivalier-unknown", "articles": [{ "id": "mojito", "quantite": 2 }] }
+        """.trimIndent()
+
+        Given {
+            contentType(ContentType.JSON)
+            body(jsonPayload)
+            // Intentionally do not set any authentication header
+        } When {
+            post("http://localhost:8080/commandes")
+        } Then {
+            statusCode(401)
+        }
+
+        // TODO: enforce authentication for POST /commandes (OrderController.postOrder)
+    }
+
     // Test-only DTOs
     data class ArticleRequest(val id: String, val quantite: Int)
     data class CreateOrderRequest(val festivalierId: String, val articles: List<ArticleRequest>)
