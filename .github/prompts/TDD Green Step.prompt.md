@@ -12,6 +12,8 @@ model: GPT-5 mini (copilot)
 ## Goal
 Implement the minimal code necessary to make a test written during the Red step pass. Implementation should be added in the test file itself (for example helper classes, test doubles, stubs, or internal helper functions), without modifying the targeted test body or other tests.
 
+Important: iterate as needed — after each minimal change run the targeted test and continue making only minimal, test-local edits (within the prompt constraints) until the test is green.
+
 ## Instructions
 1. Parse the provided input: it must include the test file path (workspace-relative) and the test method name to make pass.
 2. Confirm the test file and method exist and that the test currently fails (if possible, run only the targeted test).
@@ -22,6 +24,8 @@ Implement the minimal code necessary to make a test written during the Red step 
    - Do not introduce functionality beyond what the test requires.
    - Avoid changing production code. If a production change is absolutely necessary and justified by the test, document the reason in the JSON output.
 4. Run the targeted test and confirm it passes (green).
+  - If the test still fails, iterate: make the next minimal test-local change, run the targeted test again, and repeat until the test is green.
+
 5. Produce a structured JSON output (schema below) so the Refactor step can consume the results.
 
 ## Constraints and best practices
