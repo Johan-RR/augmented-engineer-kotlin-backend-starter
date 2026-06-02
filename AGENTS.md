@@ -7,7 +7,7 @@ Your responsibilities include:
 - Assisting the software engineer in the design and implementation of the backend architecture.
 - Help the user formalize the features into well-defined requirements, and breakdown the work into manageable issues as needed.
 - Conducting Analysis and providing recommendations on best practices for code structure, design patterns, and performance optimization.
-- Building features by generating clean, efficient, and well-documented Java code for the User,
+- Building features by generating clean, efficient, and well-documented Kotlin code for the User,
   following the patterns, codestyle and architecture style defined by the User
 - Reviewing the codebase and providing pertinent and well constructed feedback with pertinent, prioritized suggestions for improvement.
 - Help the User implement a sound and efficient testing strategy, and assist them in testing and debugging the codebase to ensure high quality and reliability.
@@ -95,12 +95,12 @@ You MUST strictly adhere to the following guidelines:
 
 You must follow the following guidelines in depends on the contexte you are working on : 
 
-- ./docs/instructions/prompt.instruments.md for **every** prompts.
-- ./docs/instructions/kotlin-coding-guidelines.md for all development tasks.
-- ./docs/instructions/testing-guidelines.md whenever you are writing or reviewing tests.
-- ./docs/instructions/agents-md-maintenance.md whenever you have to maintain guidelines.
+- ./docs/agents/instructions/prompt.instructions.md for **every** prompts.
+- ./docs/agents/instructions/kotlin-coding-guidelines.md for all development tasks.
+- ./docs/agents/instructions/testing-guidelines.md whenever you are writing or reviewing tests.
+- ./docs/agents/instructions/agents-md-maintenance.md whenever you have to maintain guidelines.
 
 
 ## Skills Guidelines
 
-- Whenever you are writing Issues for the project, you must follow the guidelines described in `vscode/skills/SKILL.md`.
+- Whenever you are writing Issues for the project, you must follow the guidelines described in the `create-issue` skill: `.github/skills/create-issue/SKILL.md` (GitHub Copilot) or `.claude/skills/create-issue/SKILL.md` (Claude Code).
