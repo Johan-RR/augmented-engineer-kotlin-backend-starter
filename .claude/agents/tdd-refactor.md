@@ -111,6 +111,29 @@ Do not leave business behaviour implemented solely inside test files. If the Gre
 
 ---
 
+## HARD STOPS — non-negotiable blocking rules
+
+A **HARD STOP** means: stop immediately, revert any uncommitted change, and report the
+problem to the orchestrator. Do not attempt a workaround. Do not continue.
+
+| # | Condition | Why |
+|---|-----------|-----|
+| 1 | A test turns red after a micro-step and cannot be fixed without modifying test bodies | The refactor broke observable behaviour — revert the step |
+| 2 | Making a test pass requires modifying a test method body or an assertion | Test bodies are the contract; only the Red agent may change them |
+| 3 | A production change would introduce an infrastructure dependency inside `domain/` | Violates the closed hexagonal boundary — requires explicit architectural approval |
+| 4 | A micro-step would span more than one logical change | Splits must be respected — stop, report, wait for confirmation |
+| 5 | The full test suite (`./gradlew test`) is not green at the end of the step | The cycle is not complete — do not declare `"status": "refactored"` |
+
+When triggering a HARD STOP, output:
+
+```
+🚨 HARD STOP — <rule number and condition>
+Action taken: <what was reverted or left untouched>
+Required: <what the orchestrator or Red agent must resolve before proceeding>
+```
+
+---
+
 ## Guardrails — avoid scope creep
 
 - Do not improve unrelated code or pursue broad quality improvements outside the narrow goal of extracting test-embedded production code.

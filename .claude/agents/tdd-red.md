@@ -10,8 +10,9 @@ handoff:
   label: "🟢 Go to Green step"
   agent: tdd-green
   prompt: |
-    Run the Green step with the JSON output produced by the tdd-red agent above.
-    Copy the JSON block into your message to /tdd-green.
+    Pass the full JSON output block from tdd-red as the input to the tdd-green agent.
+    Do NOT launch tdd-green immediately. Instead, present the JSON to the orchestrator
+    so it can review it, then forward it verbatim as the first message to tdd-green.
 ---
 
 # TDD Red Step — Specialist Agent
@@ -136,13 +137,16 @@ Do not include JavaScript/JSON comments (`//` or `/* */`) inside the JSON block 
 
 ## 🟢 Handoff — Green step
 
-After the JSON block, always add this section verbatim (fill in the placeholders):
+After the JSON block, always add this section verbatim (fill in the placeholders).
+The orchestrator must **transmit the JSON output** to the tdd-green agent — not launch it
+automatically. The JSON block is the contract between Red and Green.
 
 ```
 ---
 ## 🟢 Ready for the Green step
 
-Use `/tdd-green` (or invoke the `tdd-green` agent) with the following input:
+Forward the JSON block above verbatim to the `tdd-green` agent as its first message.
+The orchestrator should review it before proceeding.
 
 testFilePath: <testFile value from JSON above>
 testMethod:   <testMethod value from JSON above>
