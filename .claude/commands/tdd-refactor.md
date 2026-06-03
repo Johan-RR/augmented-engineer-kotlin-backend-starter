@@ -83,6 +83,48 @@ When extracting test-local scaffolding that concerns the application layer (`app
 - Do NOT leave business behaviour implemented solely inside test files. The goal of Refactor is to make the production boundary explicit and to place business logic where it belongs.
 - Prefer extracting interfaces and small adapters rather than copying full test implementations into production. Keep changes minimal and follow module boundaries.
 
+### Compilation gate (mandatory per micro-step)
+
+Every micro-step that touches the `application/` module MUST be followed by a compilation check **before** running the test:
+
+```
+./gradlew :application:compileKotlin
+```
+
+If this step fails, stop immediately, revert or fix the compilation error, and do NOT proceed to the test run. A micro-step is only considered complete when both the compilation gate AND the test run pass.
+
+After all micro-steps are done, run the **full project build** to confirm no cross-module breakage:
+
+```
+./gradlew build
+```
+
+Include the result of this final build in the `runLog` output field.
+
+### Layer wiring verification (mandatory for application layer)
+
+After extracting production code from tests, the agent MUST explicitly verify that the inter-layer wiring is correct. Work through this checklist and report each item:
+
+**Spring context wiring:**
+- [ ] Every extracted production class has the correct Spring stereotype annotation (`@Component`, `@Service`, `@Repository`, `@RestController`, `@Configuration`).
+- [ ] Every domain port interface has exactly one registered implementation (adapter) visible to the Spring context in the active profiles. If the adapter lives in `infrastructure/`, confirm it is on the classpath and picked up by component scan or a `@Bean` method.
+- [ ] No constructor dependency is left un-wired: every injected collaborator (port, service, repository) has a resolvable bean in the context.
+- [ ] If a `@Configuration` class was added or modified, confirm it does not introduce circular dependencies.
+
+**Port / adapter boundary:**
+- [ ] The extracted production class implements the correct domain port interface (e.g., `PlaceOrderUseCase`, `OrderRepository`).
+- [ ] The port interface lives in `domain/`, the adapter/implementation lives in `application/` or `infrastructure/` — no inversion of this rule.
+- [ ] The controller (or entry point) depends on the port interface, NOT on the concrete adapter.
+
+**Integration smoke test:**
+- If an `@SpringBootTest` or `@WebMvcTest` exists for the feature, run it after the final micro-step to confirm the context loads and the HTTP route is reachable end-to-end:
+  ```
+  ./gradlew :application:test --tests '<fqn.IntegrationTestClass>'
+  ```
+- If no integration test exists yet, note it in `notes` as a follow-up action.
+
+Report the result of this checklist in the JSON output under a `wiringReport` field (see schema below).
+
 ## Refactor quality checklist (mandatory, per project conventions)
 
 After reaching green, the Refactor step MUST explicitly report on:
@@ -140,10 +182,28 @@ The final result must be a valid JSON object containing at least:
   "runLog": [
     { "command": "<command>", "result": "<summary result after this step>" }
   ],
+  "wiringReport": {
+    "compilationGatePassed": true,
+    "fullBuildPassed": true,
+    "springWiring": {
+      "allBeansAnnotated": true,
+      "allPortsImplemented": true,
+      "noDanglingDependencies": true,
+      "noCircularDependencies": true
+    },
+    "portAdapterBoundary": {
+      "implementsCorrectInterface": true,
+      "portInDomain": true,
+      "adapterInCorrectModule": true,
+      "controllerDependsOnInterface": true
+    },
+    "integrationSmokeTest": "<passed | failed | not-applicable — explain why if not applicable>",
+    "issues": ["<list any wiring issues found, empty array if none>"]
+  },
   "notes": "<remarks, justification for any production changes>"
 }
 
-If the agent had to modify production code to make the refactor possible, document the precise reason in `notes`.
+The `wiringReport` field is REQUIRED when the refactored code touches the `application/` module. For other modules it is optional but recommended. If the agent had to modify production code to make the refactor possible, document the precise reason in `notes`.
 
 ## Failure
 

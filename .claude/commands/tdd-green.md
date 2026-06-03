@@ -46,6 +46,16 @@ Rules for application-layer Green steps:
 - Implement the strict minimum inside tests: add test-local stubs, spies, fixtures, or test-only beans. Avoid implementing production business logic in production modules during this step.
 - Any refactoring that moves test scaffolding into production code belongs to the Refactor step; document such needs in the JSON `notes` field if unavoidable.
 
+### Compilation gate (application layer)
+
+Before reporting the Green step as complete, run the module compilation to confirm nothing is broken at the source level:
+
+```
+./gradlew :application:compileKotlin :application:compileTestKotlin
+```
+
+If compilation fails, fix the compilation error before reporting `"status": "green"`. Do NOT mark the step green on a test run alone when the module does not compile cleanly. Include the compilation result in the `run` field or add it as a second entry if the test run command is separate.
+
 ## Expected input
 The input must include at minimum:
 - `testFilePath`: workspace-relative path to the test file (e.g. `domain/src/test/kotlin/com/example/UseCaseTest.kt`).

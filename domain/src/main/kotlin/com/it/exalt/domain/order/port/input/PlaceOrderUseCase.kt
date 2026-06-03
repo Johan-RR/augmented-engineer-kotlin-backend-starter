@@ -5,11 +5,13 @@ import com.it.exalt.domain.order.model.OrderStatus
 import com.it.exalt.domain.order.model.PlaceOrderCommand
 import com.it.exalt.domain.order.model.PlaceOrderResult
 import com.it.exalt.domain.order.port.output.StockArticleRepository
+import com.it.exalt.domain.shared.annotation.UseCase
 
 interface PlaceOrderUseCase {
     fun execute(cmd: PlaceOrderCommand): PlaceOrderResult
 }
 
+@UseCase
 class PlaceOrderUseCaseImpl(private val repository: StockArticleRepository) : PlaceOrderUseCase {
 
     private val stockValidator = StockValidator(repository)
