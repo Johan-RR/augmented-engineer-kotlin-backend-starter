@@ -1,40 +1,52 @@
-# Envoyer des rappels d'hydratation aux festivaliers : Application Module impact
+# Hydration Reminder Notifications : Application Module
 
-**Contexte**
-La couche application doit orchestrer l'envoi periodique des rappels d'hydratation, en appliquant les regles du domaine et en deleguant l'emission a l'infrastructure. Elle doit aussi garantir que les messages envoyes restent amicaux et orientent vers une consommation responsable.
+**Context**
+The application layer exposes two REST endpoints for the hydration reminder feature:
+- `GET /attendees/{id}/notifications` — lets a festival goer poll their pending hydration reminders
+- `POST /notifications/hydration-reminder` — lets the bartender manually trigger an immediate hydration reminder campaign outside the scheduled window
+
+It also orchestrates the scheduled invocation of `SendHydrationRemindersUseCase` and maps
+domain results to HTTP responses.
 
 **Acceptance Criteria**
-Feature: Envoyer des rappels d'hydratation
+Feature: Send hydration reminders to festival goers — Application
 
-Scenario: [1] Executer une campagne horaire et notifier tous les festivaliers
-Given il est 16:00 un jour de festival
-And des festivaliers actifs sont disponibles dans le systeme
-When le use case d'envoi periodique est declenche
-Then la couche application prepare un rappel d'hydratation pour chaque festivalier actif
-And la couche application demande l'envoi d'un message amical promouvant l'hydratation responsable
+Scenario: [1] Festival goer polls and retrieves pending reminders
+    Given festival goer "Alice" has one pending hydration reminder stored
+    When Alice calls GET /attendees/{alice-id}/notifications
+    Then the application returns HTTP 200 with a list containing one notification
+    And the notification body contains a friendly hydration message
 
-Scenario: [2] A 30 minutes, ne notifier que les profils en frequence renforcee
-Given il est 16:30 un jour de festival
-And un festivalier a consomme 5 boissons alcoolisees dans la derniere heure
-And un autre festivalier a consomme 2 boissons alcoolisees dans la derniere heure
-When le use case d'envoi periodique est declenche
-Then la couche application cible uniquement le festivalier en frequence renforcee
-And aucun rappel n'est prepare pour le festivalier restant en frequence horaire
+Scenario: [2] Festival goer polls with no pending reminders
+    Given festival goer "Alice" has no pending notifications
+    When Alice calls GET /attendees/{alice-id}/notifications
+    Then the application returns HTTP 200 with an empty list
 
-Scenario: [3] Ignorer les executions hors plage 11:00-19:00
-Given il est 09:30 un jour de festival
-When le use case d'envoi periodique est declenche
-Then la couche application ne prepare aucune notification
-And la couche application retourne un resultat indiquant qu'aucun envoi n'est du
+Scenario: [3] Unknown festival goer polls for notifications
+    Given no festival goer exists with ID "unknown-id"
+    When GET /attendees/unknown-id/notifications is called
+    Then the application returns HTTP 404
 
-Scenario: [4] Continuer les envois en cas d'echec ponctuel de notification
-Given il est 17:00 un jour de festival
-And 100 festivaliers doivent etre notifies
-And l'envoi echoue pour 1 festivalier pour raison technique
-When le use case d'envoi periodique est declenche
-Then la couche application poursuit l'envoi pour les 99 autres festivaliers
-And la couche application remonte un bilan de campagne avec succes et echecs
+Scenario: [4] Bartender manually triggers an immediate hydration reminder
+    Given the current time is 2:00 PM on a festival day
+    When the bartender calls POST /notifications/hydration-reminder
+    Then the use case is triggered immediately
+    And the application returns HTTP 204 No Content
+
+Scenario: [5] Bartender trigger is rejected outside the allowed time window
+    Given the current time is 8:00 PM on a festival day
+    When the bartender calls POST /notifications/hydration-reminder
+    Then the application returns HTTP 422 Unprocessable Entity
+    And the response body indicates that the sending window is closed
+
+Scenario: [6] Campaign continues despite an isolated storage failure
+    Given 100 festival goers are eligible for a reminder
+    And notification storage fails for 1 festival goer due to a transient error
+    When the use case executes
+    Then the application stores reminders for the other 99 festival goers
+    And the campaign result includes a summary of successes and failures
 
 **Notes**
-- Le contrat de sortie du use case doit permettre de tracer les envois realises et les echecs techniques.
-- Un mapping explicite des erreurs techniques doit eviter de reessayer indefiniment dans la meme execution.
+- The polling endpoint returns notifications in chronological order.
+- The manual trigger endpoint applies the same domain time-window rules as the scheduler.
+- Marking a notification as read / consumed is out of scope for this issue.

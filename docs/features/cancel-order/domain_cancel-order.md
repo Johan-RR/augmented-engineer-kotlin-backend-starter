@@ -41,6 +41,8 @@ Scenario: Reject cancellation of a non-existent order
     Then the cancellation is rejected with an OrderNotFoundException
 
 **Notes**
-- Add `ANNULEE` to the `OrderStatus` enum in `DomainModels.kt`.
+- `OrderStatus.ANNULEE` lives in `domain/order/model/Order.kt`.
 - The refund logic must be the exact mirror of the token-debit logic in `PlaceOrderUseCaseImpl`.
-- `CancelOrderCommand(orderId: String, festivalierId: String)` and `CancelOrderResult` must live in `DomainModels.kt`.
+- `CancelOrderCommand` and `CancelOrderResult` live in `domain/order/model/CancelOrderCommand.kt`.
+- `CancelOrderUseCase` (interface) et `CancelOrderUseCaseImpl` vivent ensemble dans `domain/order/port/input/CancelOrderUseCase.kt`.
+- `CancelOrderUseCaseImpl` lives in `domain/order/usecase/CancelOrderUseCaseImpl.kt`.

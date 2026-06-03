@@ -1,7 +1,7 @@
 package com.it.exalt.infrastructure.article
 
-import com.it.exalt.domain.order.Article
-import com.it.exalt.domain.order.OrderStatus
+import com.it.exalt.domain.order.model.Article
+import com.it.exalt.domain.order.model.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,5 +1,8 @@
 package com.it.exalt.domain.order
 
+import com.it.exalt.domain.order.model.FestivalierBalance
+import com.it.exalt.domain.order.port.output.FestivalierRepository
+
 class InMemoryFestivalierRepository : FestivalierRepository {
     private val store = mutableMapOf<String, FestivalierBalance>()
 

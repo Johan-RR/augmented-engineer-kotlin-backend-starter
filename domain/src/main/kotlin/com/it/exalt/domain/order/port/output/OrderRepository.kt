@@ -1,8 +1,7 @@
-package com.it.exalt.domain.order
+package com.it.exalt.domain.order.port.output
 
-/**
- * Port for persisting and retrieving Order aggregates.
- */
+import com.it.exalt.domain.order.model.Order
+
 interface OrderRepository {
     fun findById(orderId: String): Order?
     fun save(order: Order)

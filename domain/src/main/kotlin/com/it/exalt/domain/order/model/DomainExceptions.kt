@@ -1,4 +1,4 @@
-package com.it.exalt.domain.order
+package com.it.exalt.domain.order.model
 
 sealed class OrderDomainException(message: String) : RuntimeException(message)
 

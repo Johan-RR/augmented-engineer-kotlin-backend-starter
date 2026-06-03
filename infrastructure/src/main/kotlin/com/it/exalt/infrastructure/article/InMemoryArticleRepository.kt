@@ -1,8 +1,8 @@
 package com.it.exalt.infrastructure.article
 
-import com.it.exalt.domain.order.Article
-import com.it.exalt.domain.order.ArticleRepository
-import com.it.exalt.domain.order.OrderStatus
+import com.it.exalt.domain.order.model.Article
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.port.output.ArticleRepository
 
 class InMemoryArticleRepository : ArticleRepository {
     private val storage: MutableMap<String, Article> = mutableMapOf()

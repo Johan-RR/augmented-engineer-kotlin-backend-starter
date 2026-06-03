@@ -13,6 +13,12 @@ description: Create an issue in the form of a markdown file with title, descript
     4. Produce 1..N Gherkin scenarios covering happy path and edge cases.
     5. Create the issue in the `docs/features/{feature_name}/{module_name}_{issue_title}.md` file using the `issue.md` template (located in this skill folder).
     6. Validate the issue using `validate_issue_format.py` (located in this skill folder), e.g. `python .claude/skills/create-issue/validate_issue_format.py <issue_file>`.
+    7. Create the GitHub issue using the `create_issue` tool from the `github` MCP server:
+        - `owner`: `Johan-RR`
+        - `repo`: `augmented-engineer-kotlin-backend-starter`
+        - `title`: the issue title (same as the markdown file title)
+        - `body`: the full markdown content of the issue file
+        - `labels`: add a label matching the module name (`domain`, `application`, or `infrastructure`) if it exists on the repo
 4. Be sure to not include implementation if the module is not impacted, and to not include testing scenarios if the module is not impacted. For example, if the request only impacts the domain module, do not include any implementation plan or testing scenario in the application and infrastructure issues.
 5. Write the issue in English, even if the request is in another language, to ensure consistency across the codebase and documentation.
 6. If the request changes the feature behaviour that is already described in `FEATURES.md`, you must update the feature description in `FEATURES.md` to keep it aligned with the new behavior described in the issue you created.

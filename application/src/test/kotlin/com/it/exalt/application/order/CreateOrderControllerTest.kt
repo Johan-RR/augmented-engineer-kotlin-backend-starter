@@ -12,10 +12,10 @@ import org.springframework.boot.SpringApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import com.it.exalt.domain.order.PlaceOrderUseCase
-import com.it.exalt.domain.order.PlaceOrderCommand
-import com.it.exalt.domain.order.PlaceOrderResult
-import com.it.exalt.domain.order.OrderStatus
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.model.PlaceOrderCommand
+import com.it.exalt.domain.order.model.PlaceOrderResult
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCase
 import org.springframework.context.ApplicationContextInitializer
 import org.junit.jupiter.api.Test
 

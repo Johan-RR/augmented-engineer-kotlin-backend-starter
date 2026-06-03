@@ -1,4 +1,18 @@
-package com.it.exalt.domain.order
+package com.it.exalt.domain.order.port.input
+
+import com.it.exalt.domain.order.model.ArticleType
+import com.it.exalt.domain.order.model.CancelOrderCommand
+import com.it.exalt.domain.order.model.CancelOrderResult
+import com.it.exalt.domain.order.model.Order
+import com.it.exalt.domain.order.model.OrderCancellationNotAllowedException
+import com.it.exalt.domain.order.model.OrderNotFoundException
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.port.output.FestivalierRepository
+import com.it.exalt.domain.order.port.output.OrderRepository
+
+interface CancelOrderUseCase {
+    fun execute(command: CancelOrderCommand): CancelOrderResult
+}
 
 class CancelOrderUseCaseImpl(
     private val orderRepository: OrderRepository,

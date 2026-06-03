@@ -1,4 +1,9 @@
-package com.it.exalt.domain.order
+package com.it.exalt.domain.order.port.input
+
+import com.it.exalt.domain.order.model.ArticleNotFoundException
+import com.it.exalt.domain.order.model.OrderItem
+import com.it.exalt.domain.order.model.StockInsufficientException
+import com.it.exalt.domain.order.port.output.StockArticleRepository
 
 class StockValidator(private val repository: StockArticleRepository) {
 

@@ -1,41 +1,54 @@
-# Envoyer des rappels d'hydratation aux festivaliers : Infrastructure Module impact
+# Hydration Reminder Notifications : Infrastructure Module
 
-**Contexte**
-La couche infrastructure doit fournir les mecanismes techniques de planification, de collecte des donnees de consommation et d'emission des notifications vers le canal choisi. Elle doit garantir des envois fiables, sans doublons sur un meme slot, et respectant les horaires definis.
+**Context**
+The infrastructure layer provides the scheduling, data querying, and notification storage
+mechanisms required by the hydration reminder feature.
+
+Responsibilities:
+- Schedule execution of the use case every 30 minutes (at :00 and :30 marks) within the allowed window
+- Implement `AlcoholConsumptionQueryPort` by querying fulfilled order history
+- Implement `NotificationDispatchPort` by persisting generated reminders so that festival goers can poll them via the application layer
+- Guarantee idempotency: a given (festivalGoerId, slotTimestamp) pair is never stored twice
 
 **Acceptance Criteria**
-Feature: Envoyer des rappels d'hydratation
+Feature: Send hydration reminders to festival goers — Infrastructure
 
-Scenario: [1] Declencher automatiquement la campagne horaire entre 11:00 et 19:00
-Given la planification de campagne est active
-When l'horloge atteint une heure pleine comprise entre 11:00 et 19:00
-Then l'infrastructure declenche une execution de campagne d'hydratation
-And l'execution est tracee avec l'horodatage du slot
+Scenario: [1] Trigger the hourly reminder campaign between 11:00 AM and 7:00 PM
+    Given the scheduling mechanism is active
+    When the clock reaches a full hour between 11:00 AM and 7:00 PM
+    Then the infrastructure triggers one execution of the hydration reminder use case
+    And the execution is traced with the slot timestamp
 
-Scenario: [2] Declencher un slot supplementaire toutes les 30 minutes pour les profils renforces
-Given la planification de campagne est active
-When l'horloge atteint une demi-heure comprise entre 11:30 et 18:30
-Then l'infrastructure declenche une execution destinee aux profils en frequence renforcee
-And l'execution est tracee avec le type de slot THIRTY_MINUTES
+Scenario: [2] Trigger a supplementary slot at 30-minute marks for increased-frequency profiles
+    Given the scheduling mechanism is active
+    When the clock reaches a half-hour mark between 11:30 AM and 6:30 PM
+    Then the infrastructure triggers one execution of the hydration reminder use case
+    And the execution is traced with slot type THIRTY_MINUTES
 
-Scenario: [3] Calculer le nombre de boissons alcoolisees sur une fenetre glissante d'une heure
-Given un historique de consommations horodatees est disponible en persistance
-When l'adaptateur lit les consommations d'un festivalier a 15:30
-Then seules les consommations alcoolisees entre 14:30 et 15:30 sont comptees
-And le resultat est fourni au domaine pour decider de la frequence
+Scenario: [3] Count alcoholic drinks in a rolling one-hour window from order history
+    Given festival goer "Alice" has fulfilled orders containing alcoholic drinks with timestamps available
+    When the AlcoholConsumptionQueryPort adapter is called for "Alice" at 3:30 PM
+    Then only alcoholic drink line items from orders fulfilled between 2:30 PM and 3:30 PM are counted
+    And the count is returned to the domain use case
 
-Scenario: [4] Eviter les doublons d'envoi sur un meme festivalier et un meme slot
-Given une execution de campagne pour le slot 16:00 a deja ete enregistree pour un festivalier
-When une seconde execution technique tente de publier le meme rappel pour le meme slot
-Then l'infrastructure bloque la double emission
-And une trace d'idempotence est enregistree
+Scenario: [4] Persist a generated hydration reminder for later polling
+    Given a hydration reminder has been generated for festival goer "Alice" for slot 4:00 PM
+    When the NotificationDispatchPort adapter stores the reminder
+    Then the reminder is persisted and retrievable by Alice's ID
 
-Scenario: [5] Ne pas executer de campagne hors plage horaire
-Given la planification de campagne est active
-When l'horloge atteint 20:00
-Then aucune execution de campagne n'est declenchee
-And aucun message n'est emis vers le canal de notification
+Scenario: [5] Prevent duplicate notifications for the same festival goer and slot
+    Given a hydration reminder for festival goer "Alice" at slot 4:00 PM is already stored
+    When a second execution attempts to store the same reminder for the same slot
+    Then the infrastructure blocks the duplicate
+    And an idempotency trace is recorded
+
+Scenario: [6] Do not execute any campaign outside the allowed time window
+    Given the scheduling mechanism is active
+    When the clock reaches 8:00 PM
+    Then no campaign execution is triggered
+    And no reminder is stored
 
 **Notes**
-- Le mecanisme d'idempotence peut s'appuyer sur une cle composee festivalierId plus slotHorodatage.
-- La timezone du festival doit etre configurable au niveau infrastructure et alignee avec la couche domaine.
+- Idempotency key: composite of `festivalGoerId` + `slotTimestamp`.
+- Festival timezone must be configurable at the infrastructure level and aligned with the domain layer.
+- The notification store acts as a persistent outbox that the application layer exposes via polling endpoint.

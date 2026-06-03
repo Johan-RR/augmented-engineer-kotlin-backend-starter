@@ -1,5 +1,10 @@
 package com.it.exalt.domain.order
 
+import com.it.exalt.domain.order.model.OrderItem
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.model.PlaceOrderCommand
+import com.it.exalt.domain.order.model.StockInsufficientException
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -51,10 +56,7 @@ class PlaceOrderUseCaseTest {
         assertThat(result.status).isEqualTo(OrderStatus.EN_ATTENTE)
 
         // And the stock of "Mojito" is decremented by 2
-        // This should fail currently because production implementation is missing.
         assertThat(mojito.quantity).isEqualTo(8)
-
-        // TODO: implement PlaceOrderUseCase.execute to decrement Article.quantity and persist changes
     }
 
     @Test
@@ -82,10 +84,6 @@ class PlaceOrderUseCaseTest {
 
         // And the stock of "Mojito" is unchanged
         assertThat(mojito.quantity).isEqualTo(1)
-
-        // TODO: implement PlaceOrderUseCase.execute to:
-        //  - validate stock availability and throw IllegalStateException("STOCK_INSUFFISANT")
-        //  - avoid mutating stock on failure
     }
 
     @Test
@@ -108,12 +106,9 @@ class PlaceOrderUseCaseTest {
         assertThat(caught).isNotNull()
         assertThat(caught is StockInsufficientException).isEqualTo(true)
         // And l'erreur mentionne l'article concerné
-        // TODO: implement StockInsufficientException to include the article name in its message
         assertThat(caught!!.message).isEqualTo("STOCK_INSUFFISANT: Bière Pale Ale")
 
         // And le stock de l'article reste à 0 (aucune mutation)
         assertThat(bierePaleAle.quantity).isEqualTo(0)
     }
 }
-
-

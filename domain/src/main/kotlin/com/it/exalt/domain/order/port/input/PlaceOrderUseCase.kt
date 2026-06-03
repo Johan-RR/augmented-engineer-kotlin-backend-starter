@@ -1,4 +1,14 @@
-package com.it.exalt.domain.order
+package com.it.exalt.domain.order.port.input
+
+import com.it.exalt.domain.order.model.InvalidOrderRequestException
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.model.PlaceOrderCommand
+import com.it.exalt.domain.order.model.PlaceOrderResult
+import com.it.exalt.domain.order.port.output.StockArticleRepository
+
+interface PlaceOrderUseCase {
+    fun execute(cmd: PlaceOrderCommand): PlaceOrderResult
+}
 
 class PlaceOrderUseCaseImpl(private val repository: StockArticleRepository) : PlaceOrderUseCase {
 
@@ -11,7 +21,6 @@ class PlaceOrderUseCaseImpl(private val repository: StockArticleRepository) : Pl
 
         stockValidator.validate(cmd.items)
 
-        // All available: decrement and persist
         for (item in cmd.items) {
             val art = repository.findById(item.articleId)!!
             art.quantity = art.quantity - item.quantity

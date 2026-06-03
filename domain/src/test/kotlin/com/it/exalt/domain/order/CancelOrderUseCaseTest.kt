@@ -1,5 +1,15 @@
 package com.it.exalt.domain.order
 
+import com.it.exalt.domain.order.model.ArticleType
+import com.it.exalt.domain.order.model.CancelOrderCommand
+import com.it.exalt.domain.order.model.FestivalierBalance
+import com.it.exalt.domain.order.model.Order
+import com.it.exalt.domain.order.model.OrderCancellationNotAllowedException
+import com.it.exalt.domain.order.model.OrderLineItem
+import com.it.exalt.domain.order.model.OrderNotFoundException
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.port.input.CancelOrderUseCase
+import com.it.exalt.domain.order.port.input.CancelOrderUseCaseImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -146,20 +156,12 @@ class CancelOrderUseCaseTest {
 // Test-only helper types
 // ---------------------------------------------------------------------------
 
-/**
- * Snapshot of a festivalier token balance used in test assertions.
- * The production equivalent is FestivalierBalance in FestivalierRepository.kt.
- */
 data class FestivalierWithTokens(
     val id: String,
     var drinkTokens: Int,
     var foodTokens: Int
 )
 
-/**
- * Lightweight order snapshot used in test assertions.
- * The production equivalent is Order in DomainModels.kt.
- */
 data class TestOrder(
     val orderId: String,
     val festivalierId: String,
@@ -167,9 +169,6 @@ data class TestOrder(
     val items: List<CancelOrderFixture.OrderItemWithType> = emptyList()
 )
 
-/**
- * Test fixture for CancelOrderUseCase scenarios.
- */
 class CancelOrderFixture {
 
     data class OrderItemWithType(val type: ArticleType, val quantity: Int)
@@ -221,4 +220,3 @@ class CancelOrderFixture {
 
     fun useCaseHandler(): CancelOrderUseCase = CancelOrderUseCaseImpl(orderRepository, festivalierRepository)
 }
-

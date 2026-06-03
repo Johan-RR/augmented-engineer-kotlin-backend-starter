@@ -1,6 +1,6 @@
 package com.it.exalt.infrastructure.article
 
-import com.it.exalt.domain.order.OrderStatus
+import com.it.exalt.domain.order.model.OrderStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

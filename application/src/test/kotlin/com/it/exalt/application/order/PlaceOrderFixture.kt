@@ -1,10 +1,10 @@
 package com.it.exalt.application.order
 
-import com.it.exalt.domain.order.Article
-import com.it.exalt.domain.order.ArticleRepository
-import com.it.exalt.domain.order.OrderStatus
-import com.it.exalt.domain.order.PlaceOrderUseCase
-import com.it.exalt.domain.order.PlaceOrderUseCaseImpl
+import com.it.exalt.domain.order.model.Article
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCase
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCaseImpl
+import com.it.exalt.domain.order.port.output.ArticleRepository
 
 class PlaceOrderFixture {
     fun getUseCaseHandler(): PlaceOrderUseCase {

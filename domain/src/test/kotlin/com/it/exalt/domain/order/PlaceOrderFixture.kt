@@ -1,5 +1,10 @@
 package com.it.exalt.domain.order
 
+import com.it.exalt.domain.order.model.Article
+import com.it.exalt.domain.order.model.Festivalier
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCase
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCaseImpl
+
 class PlaceOrderFixture {
     private val articles = mutableMapOf<String, Article>()
 

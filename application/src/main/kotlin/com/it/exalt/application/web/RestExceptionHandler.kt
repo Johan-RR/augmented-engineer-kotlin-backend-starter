@@ -1,8 +1,8 @@
 package com.it.exalt.application.web
 
-import com.it.exalt.domain.order.ArticleNotFoundException
-import com.it.exalt.domain.order.StockInsufficientException
-import com.it.exalt.domain.order.InvalidOrderRequestException
+import com.it.exalt.domain.order.model.ArticleNotFoundException
+import com.it.exalt.domain.order.model.InvalidOrderRequestException
+import com.it.exalt.domain.order.model.StockInsufficientException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler

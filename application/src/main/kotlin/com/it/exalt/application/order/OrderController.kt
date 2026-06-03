@@ -1,7 +1,8 @@
 package com.it.exalt.application.order
 
-import com.it.exalt.domain.order.PlaceOrderCommand
-import com.it.exalt.domain.order.PlaceOrderUseCase
+import com.it.exalt.domain.order.model.OrderItem
+import com.it.exalt.domain.order.model.PlaceOrderCommand
+import com.it.exalt.domain.order.port.input.PlaceOrderUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,7 +18,7 @@ class OrderController(private val placeOrderUseCase: PlaceOrderUseCase) {
 
     @PostMapping("/commandes")
     fun postOrder(@RequestBody request: CreateOrderRequest): ResponseEntity<CreateOrderResponse> {
-        val items = request.articles.map { com.it.exalt.domain.order.OrderItem(it.id, it.quantite) }
+        val items = request.articles.map { OrderItem(it.id, it.quantite) }
         val cmd = PlaceOrderCommand(request.festivalierId, items)
         val result = placeOrderUseCase.execute(cmd)
         val orderId = result.orderId ?: UUID.randomUUID().toString()

@@ -1,5 +1,9 @@
 package com.it.exalt.domain.order
 
+import com.it.exalt.domain.order.model.Article
+import com.it.exalt.domain.order.model.OrderStatus
+import com.it.exalt.domain.order.port.output.ArticleRepository
+
 class InMemoryArticleRepository(private val storage: MutableMap<String, Article>) : ArticleRepository {
     override fun findById(id: String): Article? = storage[id]
     override fun save(article: Article) { storage[article.id] = article }

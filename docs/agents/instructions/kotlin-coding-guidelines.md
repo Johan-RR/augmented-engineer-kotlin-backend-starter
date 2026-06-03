@@ -163,3 +163,32 @@ Cette section precise comment representer les echecs metier et techniques sans b
 - Pour les erreurs metier attendues, journaliser au niveau adapte (souvent info/warn), pas en erreur systematique.
 - Conserver des messages utilisateur clairs et des messages techniques detailles separes.
 
+## 5. Organisation des packages dans le module domain
+
+Chaque bounded context (ex: `order`) est organise en quatre sous-packages :
+
+```
+domain/
+└── <context>/           ex: order/
+    ├── model/           Entites, value objects, enums, commandes, resultats, exceptions metier
+    └── port/
+        ├── input/       Un fichier par use case, nomme apres l'interface (ex: PlaceOrderUseCase.kt)
+        │                Contient l'interface ET son unique implementation dans le meme fichier.
+        │                Contient aussi les services metier internes utilises par les use cases (ex: StockValidator.kt).
+        └── output/      Un fichier par port sortant (interfaces repository implementees par infrastructure)
+```
+
+### Regles de placement
+
+- **model/** : un type principal par fichier. Types regroupes quand fortement couples au meme aggregate
+  (ex: `Order.kt` contient `Order`, `OrderStatus`, `OrderItem`, `OrderLineItem`).
+- **port/input/** : fichier nomme d'apres l'interface use case (ex: `PlaceOrderUseCase.kt`).
+  Contient l'interface ET son implementation (`*UseCaseImpl`) dans le meme fichier.
+  Les deux sont colocalisees car il n'existe qu'une seule implementation par use case dans ce projet.
+  Les services metier internes (ex: `StockValidator`) ont leur propre fichier dans ce meme package.
+- **port/output/** : une interface par port sortant. Depend uniquement de `model/`.
+
+### Contrainte ferme
+
+`infrastructure` importe uniquement `port/output/` et `model/`.
+`application` importe uniquement `port/input/` (interfaces use case) et `model/`.
