@@ -1,11 +1,18 @@
 package com.it.exalt.domain.order
 
-class StockInsufficientException(message: String = "STOCK_INSUFFISANT") : IllegalStateException(message)
+sealed class OrderDomainException(message: String) : RuntimeException(message)
 
-class ArticleNotFoundException(message: String = "ARTICLE_NOT_FOUND") : IllegalStateException(message)
+class StockInsufficientException(articleName: String) :
+    OrderDomainException("STOCK_INSUFFISANT: $articleName")
 
-class InvalidOrderRequestException(message: String = "INVALID_ORDER_REQUEST") : IllegalArgumentException(message)
+class ArticleNotFoundException(message: String = "ARTICLE_NOT_FOUND") :
+    OrderDomainException(message)
 
-class OrderNotFoundException(message: String = "ORDER_NOT_FOUND") : IllegalArgumentException(message)
+class InvalidOrderRequestException(message: String = "INVALID_ORDER_REQUEST") :
+    OrderDomainException(message)
 
-class OrderCancellationNotAllowedException(message: String = "ORDER_CANCELLATION_NOT_ALLOWED") : IllegalStateException(message)
+class OrderNotFoundException(message: String = "ORDER_NOT_FOUND") :
+    OrderDomainException(message)
+
+class OrderCancellationNotAllowedException(message: String = "ORDER_CANCELLATION_NOT_ALLOWED") :
+    OrderDomainException(message)

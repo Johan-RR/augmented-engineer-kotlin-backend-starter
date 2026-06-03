@@ -76,9 +76,9 @@ class PlaceOrderUseCaseTest {
             e
         }
 
-        // Then the order is refused and a STOCK_INSUFFISANT error is raised
+        // Then the order is refused and a STOCK_INSUFFISANT error is raised, mentioning the article
         assertThat(caught).isNotNull()
-        assertThat(caught!!.message).isEqualTo("STOCK_INSUFFISANT")
+        assertThat(caught!!.message).isEqualTo("STOCK_INSUFFISANT: Mojito")
 
         // And the stock of "Mojito" is unchanged
         assertThat(mojito.quantity).isEqualTo(1)
@@ -87,37 +87,33 @@ class PlaceOrderUseCaseTest {
         //  - validate stock availability and throw IllegalStateException("STOCK_INSUFFISANT")
         //  - avoid mutating stock on failure
     }
-}
 
-// --- Test-only minimal stubs/helpers to make the test pass (green) ---
-// These are intentionally simple and placed here to satisfy the Green TDD step.
+    @Test
+    fun shouldRefuseOrder_andIndicateArticleName_whenStockIsExactlyZero() {
+        // Given un article "Bière Pale Ale" avec un stock de 0 unité
+        val customer = fixture.identifiedFestivalier()
+        val bierePaleAle = fixture.availableArticle("Bière Pale Ale", quantity = 0)
+        val handler: PlaceOrderUseCase = fixture.useCaseHandler()
 
-// Minimal assertion helpers to avoid needing AssertJ on the classpath.
-class SimpleAssert<T>(private val actual: T?) {
-    fun isNotNull() {
-        if (actual == null) throw AssertionError("Expected value to be not null")
+        // When un client tente de commander 1 unité
+        val command = PlaceOrderCommand(customer.id, listOf(OrderItem(bierePaleAle.id, 1)))
+        val caught = try {
+            handler.execute(command)
+            null
+        } catch (e: Exception) {
+            e
+        }
+
+        // Then une erreur métier est levée indiquant que le stock est insuffisant
+        assertThat(caught).isNotNull()
+        assertThat(caught is StockInsufficientException).isEqualTo(true)
+        // And l'erreur mentionne l'article concerné
+        // TODO: implement StockInsufficientException to include the article name in its message
+        assertThat(caught!!.message).isEqualTo("STOCK_INSUFFISANT: Bière Pale Ale")
+
+        // And le stock de l'article reste à 0 (aucune mutation)
+        assertThat(bierePaleAle.quantity).isEqualTo(0)
     }
-
-    fun isEqualTo(expected: T) {
-        if (actual != expected) throw AssertionError("Expected <$expected> but was <$actual>")
-    }
-}
-
-fun <T> assertThat(actual: T?): SimpleAssert<T> = SimpleAssert(actual)
-
-class PlaceOrderFixture {
-    private val articles = mutableMapOf<String, Article>()
-
-    fun identifiedFestivalier(): Festivalier = Festivalier("festivalier-1")
-
-    fun availableArticle(name: String, quantity: Int): Article {
-        val id = "article-${articles.size + 1}"
-        val article = Article(id, name, quantity)
-        articles[id] = article
-        return article
-    }
-
-    fun useCaseHandler(): PlaceOrderUseCase = PlaceOrderUseCaseImpl(InMemoryArticleRepository(articles))
 }
 
 
