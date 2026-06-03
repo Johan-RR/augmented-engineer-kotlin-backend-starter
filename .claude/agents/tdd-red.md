@@ -1,5 +1,6 @@
 ---
 name: tdd-red
+model: sonnet
 description: >
   TDD Red step specialist. Invoked at the start of every TDD cycle to write exactly one
   failing test for a given scenario (Gherkin or free-form description). Use before tdd-green.

@@ -1,5 +1,6 @@
 ---
 name: tdd-refactor
+model: sonnet
 description: >
   TDD Refactor step specialist. Invoked after tdd-green to extract production code out of
   test files, implement real production behaviour, and clean up the codebase — one

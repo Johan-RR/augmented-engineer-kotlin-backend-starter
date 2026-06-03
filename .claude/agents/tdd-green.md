@@ -1,5 +1,6 @@
 ---
 name: tdd-green
+model: sonnet
 description: >
   TDD Green step specialist. Invoked after tdd-red to implement the minimal code required
   to make one previously failing test pass. All added code stays in test sources — no
