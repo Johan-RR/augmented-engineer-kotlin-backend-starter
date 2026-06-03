@@ -86,11 +86,15 @@ After the Refactor step completes, present a structured summary:
 | 🟢 Green | Minimal scaffolding added (test-local stubs / helpers) |
 | ⚪ Refactor | Production code extracted + SOLID/pattern report |
 
-Then ask the user:
+Then relay the `next_pass_proposal` from the Refactor JSON output verbatim to the user.
 
-> "What would you like to do next?
-> **(a)** Another refactoring pass on the current code
-> **(b)** Start a new TDD cycle with a new scenario"
+If `next_pass_proposal` is non-empty, present it as a numbered list and ask:
+
+> "Souhaites-tu qu'une nouvelle passe de refactoring applique ces améliorations, ou préfères-tu démarrer un nouveau cycle TDD ?"
+
+If `next_pass_proposal` is empty, ask:
+
+> "Le code est propre. Souhaites-tu démarrer un nouveau cycle TDD ?"
 
 ---
 
@@ -98,7 +102,8 @@ Then ask the user:
 
 Spawn `tdd-refactor` again with a prompt that includes:
 - The JSON output from the latest refactor step.
-- A note that the user requested an additional pass and that all tests must remain green.
+- The `next_pass_proposal` items confirmed by the user, listed explicitly as tasks to apply.
+- A note that all tests must remain green.
 
 Repeat from Step 5 after completion.
 

@@ -154,6 +154,38 @@ A silent skip of this report is a defect.
 
 ---
 
+## Continuation proposal (mandatory self-evaluation)
+
+After the quality checklist, you **MUST** self-evaluate whether another refactoring pass is warranted.
+
+**Rule:** If the quality checklist reveals any actionable improvement — SOLID violation, applicable design pattern, duplication, or naming issue — you **MUST** propose a follow-up pass with a concrete, numbered list of what would be applied.
+
+Format the proposal as:
+
+```
+## Passe de refactoring supplémentaire disponible
+
+Les points suivants ont été identifiés et pourraient être appliqués lors d'une prochaine passe :
+
+1. **[Pattern/Principe]** — [description courte du problème et de la solution]
+2. **[Pattern/Principe]** — [description courte du problème et de la solution]
+...
+
+Souhaites-tu qu'une nouvelle passe de refactoring applique ces améliorations ?
+```
+
+If the quality checklist finds nothing actionable (everything is already compliant and clean), state explicitly:
+
+```
+## Aucune passe supplémentaire nécessaire
+
+Le code est conforme SOLID, aucune duplication identifiée, aucun pattern applicable à ce stade.
+```
+
+**Never skip this section.** A refactoring phase that ends without a continuation assessment is incomplete.
+
+---
+
 ## Structured output (mandatory)
 
 At the end of your response you **MUST** produce a JSON code block with the following schema.
@@ -180,8 +212,16 @@ At the end of your response you **MUST** produce a JSON code block with the foll
   "quality_report": {
     "solid": "<findings or 'compliant'>",
     "design_patterns": "<opportunities identified — awaiting confirmation before applying>",
-    "duplication_and_naming": "<findings or 'none'"
+    "duplication_and_naming": "<findings or 'none'>"
   },
+  "next_pass_proposal": [
+    {
+      "priority": 1,
+      "principle_or_pattern": "<SOLID principle or design pattern name>",
+      "problem": "<one-line description of the current issue>",
+      "solution": "<one-line description of the proposed change>"
+    }
+  ],
   "notes": "<justifications for any production changes, cross-layer decisions, or deferred improvements>"
 }
 ```

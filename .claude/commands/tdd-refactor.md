@@ -91,6 +91,36 @@ After reaching green, the Refactor step MUST explicitly report on:
 - Duplication removal, naming and readability.
 A silent skip of this report is a defect.
 
+## Continuation proposal (mandatory self-evaluation)
+
+After the quality checklist, you **MUST** self-evaluate whether another refactoring pass is warranted.
+
+**Rule:** If the quality checklist reveals any actionable improvement — SOLID violation, applicable design pattern, duplication, or naming issue — you **MUST** propose a follow-up pass with a concrete, numbered list of what would be applied.
+
+Format the proposal as:
+
+```
+## Passe de refactoring supplémentaire disponible
+
+Les points suivants ont été identifiés et pourraient être appliqués lors d'une prochaine passe :
+
+1. **[Pattern/Principe]** — [description courte du problème et de la solution]
+2. **[Pattern/Principe]** — [description courte du problème et de la solution]
+...
+
+Souhaites-tu qu'une nouvelle passe de refactoring applique ces améliorations ?
+```
+
+If the quality checklist finds nothing actionable, state:
+
+```
+## Aucune passe supplémentaire nécessaire
+
+Le code est conforme SOLID, aucune duplication identifiée, aucun pattern applicable à ce stade.
+```
+
+**Never skip this section.**
+
 ## Expected output (JSON)
 
 The final result must be a valid JSON object containing at least:

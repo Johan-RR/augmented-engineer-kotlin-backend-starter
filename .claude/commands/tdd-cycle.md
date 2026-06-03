@@ -45,14 +45,17 @@ Scenario / feature: $ARGUMENTS
    - **🟢 Green** — minimal scaffolding added (test-local stubs / helpers)
    - **⚪ Refactor** — production code extracted, SOLID/pattern report
 
-   Then ask the user:
+   Then relay the `next_pass_proposal` from the Refactor JSON output verbatim to the user.
+   If `next_pass_proposal` is non-empty, present it as a numbered list and ask:
 
-   > "What would you like to do next?
-   > (a) Another refactoring pass on the current code
-   > (b) Start a new TDD cycle with a new scenario"
+   > "Souhaites-tu qu'une nouvelle passe de refactoring applique ces améliorations, ou préfères-tu démarrer un nouveau cycle TDD ?"
 
-   - **Option (a):** Spawn `tdd-refactor` again. Build its prompt from the latest refactor JSON output, describing the current codebase state and asking for one more pass.
-   - **Option (b):** Restart from step 1 with the new scenario provided by the user.
+   - **Option (a) — nouvelle passe refacto :** Spawn `tdd-refactor` again, passing the current JSON output and the confirmed `next_pass_proposal` items as explicit tasks.
+   - **Option (b) — nouveau cycle TDD :** Restart from step 1 with the new scenario provided by the user.
+
+   If `next_pass_proposal` is empty, simply ask:
+
+   > "Le code est propre. Souhaites-tu démarrer un nouveau cycle TDD ?"
 
 ## Rules
 
